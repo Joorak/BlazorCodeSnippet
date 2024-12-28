@@ -1,0 +1,42 @@
+﻿@page "/SSR-Interactivecomponents"
+
+<h3>SSR - Interactive Components</h3>
+
+<div class="container mt-5">
+    <div class="row  justify-content-center">
+        <div class="col-11 p-2 m-1 border rounded-4">
+            <h5 class="text-danger mb-2">Use component without any render mode.In this case it acts as Static Server Render </h5>
+            <Counter />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-11 col-xl-5 p-2 mx-auto my-2 border rounded-4">
+            <h5 class="text-danger mb-2">Use component by [InteractiveServer] render mode</h5>
+            <Counter @rendermode="RenderMode.InteractiveServer" />
+        </div>
+        <div class="col-11 col-xl-5 p-2 mx-auto my-2 border rounded-4">
+            <h5 class="text-danger mb-2">Use component by [InteractiveAuto] render mode</h5>
+            <Counter @rendermode="RenderMode.InteractiveAuto" />
+        </div>
+    </div>
+</div>
+
+<hr class="mt-5 w-100" />
+<p><i class="fas fa-check-circle fs-3 text-success"></i> Mark any page/component as Server/WebAssembly/both</p>
+<p><i class="fas fa-check-circle fs-3 text-success"></i> Work with enhanced navigation / forms</p>
+<p><i class="fas fa-exclamation-triangle fs-3 text-warning"></i> Requires WebSocket connection or WebAssembly payload</p>
+@code {
+        int? count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        count = 0;
+        for (int i = 0; i < 5; i++)
+        {
+            await Task.Delay(1000);
+            count++;
+            StateHasChanged();
+        }
+    }
+    
+}

@@ -1,0 +1,20 @@
+﻿@inherits LayoutComponentBase
+
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+    
+    <main class="d-flex flex-column">
+        <SimpleNavMenu />
+        @Body
+
+        <div class="bg-secondary-subtle mt-auto h-25 ">
+            <p><i class="fas fa-check-circle fs-3 text-success"></i> Faster page loads with fewer HTTP requests</p>
+            <p><i class="fas fa-check-circle fs-3 text-success"></i> Keep input value during navigations by [data-permanent] attribute</p>
+        </div>
+    </main>
+
+
+</div>

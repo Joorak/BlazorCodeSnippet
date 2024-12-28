@@ -1,0 +1,27 @@
+﻿@page "/SSR-StreamRendering"
+@attribute [StreamRendering]
+
+<h3>SSR - Stream Rendering</h3>
+
+<p>
+    The Count is: @count
+</p>
+<hr class="mt-5 w-100" />
+
+<p><i class="fas fa-check-circle fs-3 text-success"></i> Skip waiting for database/API calls</p>
+<p><i class="fas fa-check-circle fs-3 text-success"></i> Fast initial UI render/update</p>
+<p><i class="fas fa-check-circle fs-3 text-success"></i> Begin loading static resources in parallel</p>
+<p><i class="fas fa-exclamation-triangle fs-3 text-warning"></i> Use when data loading is likely to take multiple seconds</p>
+@code {
+    int count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            await Task.Delay(1000);
+            count++;
+            StateHasChanged();
+        }
+    }
+}
