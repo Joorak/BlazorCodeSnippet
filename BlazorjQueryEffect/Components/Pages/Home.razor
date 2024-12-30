@@ -1,0 +1,240 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using System.ComponentModel
+@using System.Reflection
+@using System.Runtime.CompilerServices
+@implements IDisposable
+
+<Animation Enabled="IsActive"
+Effect="@SelectedEffect"
+Speed="@SelectedSpeed"
+Delay="@SelectedDelay"
+IterationCount="@SelectedIterationCount"
+OnAnimationEnd="End">
+    <h1 class="text-center rounded-pill p-3 mb-2 bg-secondary-subtle text-black">Blazor Animation !</h1>
+</Animation>
+
+<EditForm Model="@Model" OnSubmit="Submit">
+    <form class="form-group mb-3">
+        <label for="effect">Effect</label>
+        <InputSelect @bind-Value="Model.Effect" class="form-control form-select" id="effect">
+
+            @foreach (var member in typeof(Effect).GetProperties(BindingFlags.Static | BindingFlags.Public)) {
+                var cssClass = member.GetValue(null) as AnimationEffect;
+                if (!CompatibilityEffects.Contains(@member.Name))
+                {
+                    <option value="@cssClass?.Name">@member.Name</option>
+                }
+            }
+
+        </InputSelect>
+    </form>
+
+    <form class="form-group mb-3">
+        <label for="delay">Delay @(ShowManualDelay ? "(in milliseconds)" : string.Empty)</label>
+        <div class="row">
+            <div class="col-5">
+
+                @if (ShowManualDelay) {
+
+                    <Animation Effect="@Effect.BounceInLeft" OptionsName="fast">
+                        <InputNumber @bind-Value="@Model.Delay2" class="form-control form-range"></InputNumber>
+                    </Animation>
+
+                }
+                else {
+                    <Animation Effect="@Effect.BounceInRight" OptionsName="fast" Enabled="@ShowManualDelayEnabled">
+                        <InputSelect @bind-Value="Model.Delay" class="form-control form-select" id="delay">
+                            @foreach (var member in typeof(Delay).GetProperties(BindingFlags.Static | BindingFlags.Public)) {
+                                var cssClass = member?.GetValue(null)?.ToString();
+                                <option value="@cssClass">@member?.Name</option>
+                            }
+
+                        </InputSelect>
+                    </Animation>
+                }
+
+            </div>
+            <div class="col-2">
+                <button class="btn btn-info" type="button" @onclick="@ShowManualDelayClicked">Swap</button>
+            </div>
+        </div>
+    </form>
+
+    <form class="form-group mb-3">
+        <label for="speed">Speed @(ShowManualSpeed ? "(in milliseconds)" : string.Empty)</label>
+        <div class="row">
+            <div class="col-5">
+
+                @if (ShowManualSpeed) {
+                    <Animation Effect="@Effect.BounceInLeft" OptionsName="fast">
+                        <InputNumber @bind-Value="@Model.Speed2" class="form-control form-range"></InputNumber>
+                    </Animation>
+                }
+                else {
+                    <Animation Effect="@Effect.BounceInRight" OptionsName="fast" Enabled="@ShowManualSpeedEnabled">
+                        <InputSelect @bind-Value="Model.Speed" class="form-control form-select" id="speed">
+                            @foreach (var member in typeof(Speed).GetProperties(BindingFlags.Static | BindingFlags.Public)) {
+                                var cssClass = member?.GetValue(null)?.ToString();
+                                <option value="@cssClass">@member?.Name</option>
+                            }
+                        </InputSelect>
+                    </Animation>
+                }
+            </div>
+            <div class="col-2">
+                <button class="btn btn-info" type="button" @onclick="@ShowManualSpeedClicked">Swap</button>
+            </div>
+        </div>
+    </form>
+
+    <form class="form-group mb-3">
+        <label>Iteration count (if &#60; 0 = infinite)</label>
+        <InputNumber @bind-Value="@Model.IterationCount" class="form-control form-range"></InputNumber>
+    </form>
+
+    <div class="form-row ">
+        <button type="submit" class="btn btn-secondary form-control">Play</button>
+    </div>
+
+</EditForm>
+
+@code
+{
+    private static string DefaultEffect = "bounce";
+    private static TimeSpan DefaultDelay = TimeSpan.Zero;
+    private static TimeSpan DefaultSpeed = Speed.Slow;
+    private static int DefaultIterationCount = 1;
+    DemoModel Model { get; set; } = new DemoModel(DefaultEffect, DefaultDelay.ToString(), DefaultSpeed.ToString(), DefaultIterationCount);
+    protected override void OnInitialized()
+    {
+        Model.PropertyChanged += OnChange!;
+
+    }
+    // protected override void OnParametersSet()
+    // {
+    //     Model.PropertyChanged += OnChange!;
+    // }
+    
+    private HashSet<string> CompatibilityEffects = new HashSet<string>()
+    {
+        nameof(Effect.Shake),
+        nameof(Effect.LightSpeedIn),
+        nameof(Effect.LightSpeedOut),
+    };
+
+    
+
+    private bool ShowManualDelay = false;
+    private bool ShowManualDelayEnabled = false;
+    private bool ShowManualSpeed = false;
+    private bool ShowManualSpeedEnabled = false;
+
+    protected void ShowManualDelayClicked()
+    {
+        ShowManualDelay = !ShowManualDelay;
+        ShowManualDelayEnabled = true;
+    }
+
+    protected void ShowManualSpeedClicked()
+    {
+        ShowManualSpeed = !ShowManualSpeed;
+        ShowManualSpeedEnabled = true;
+    }
+
+    private bool IsActive { get; set; } = true;
+    private AnimationEffect SelectedEffect { get; set; } = new AnimationEffect(DefaultEffect);
+
+    private TimeSpan SelectedDelay { get; set; } = DefaultDelay;
+    private TimeSpan SelectedSpeed { get; set; } = DefaultSpeed;
+    private int SelectedIterationCount { get; set; } = DefaultIterationCount;
+
+    private void End() {
+        IsActive = false;
+        StateHasChanged();
+    }
+
+    private void Submit() {
+        SelectedEffect = new AnimationEffect(Model.Effect);
+        SelectedDelay = TimeSpan.Parse(Model.Delay);
+        SelectedSpeed = TimeSpan.Parse(Model.Speed);
+        SelectedIterationCount = Model.IterationCount;
+        IsActive = true;
+        StateHasChanged();
+    }
+
+    
+    public class DemoModel : INotifyPropertyChanged
+    {
+        private string _effect;
+        private string _delay;
+        private string _speed;
+
+        public DemoModel(string effect, string delay, string speed, int iterationCount) {
+            _effect = effect;
+            _delay = delay;
+            _speed = speed;
+            IterationCount = iterationCount;
+        }
+
+        public int IterationCount { get; set; }
+
+        public string Effect
+        {
+            get => _effect;
+            set
+            {
+                _effect = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Delay
+        {
+            get => _delay;
+            set
+            {
+                _delay = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Speed
+        {
+            get => _speed;
+            set
+            {
+                _speed = value; 
+                OnPropertyChanged();
+            }
+        }
+
+
+        public int Delay2
+        {
+            get => (int) TimeSpan.Parse(Delay).TotalMilliseconds;
+            set => Delay = TimeSpan.FromMilliseconds(value).ToString();
+        }
+
+        public int Speed2
+        {
+            get => (int) TimeSpan.Parse(Speed).TotalMilliseconds;
+            set => Speed = TimeSpan.FromMilliseconds(value).ToString();
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "Effect")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    private void OnChange(object sender, object args) => Submit();
+
+    public void Dispose()
+    {
+        Model.PropertyChanged -= OnChange!;
+    }
+}

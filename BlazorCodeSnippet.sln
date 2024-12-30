@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLibrary", "SharedLibr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScaffoldModel", "ScaffoldModel\ScaffoldModel.csproj", "{FECB66B0-23BE-4632-8DD1-DBC077F8FFCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorjQueryEffect", "BlazorjQueryEffect\BlazorjQueryEffect.csproj", "{B63855B6-B4E8-4A8C-A4DD-B5A4FA1F162D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FECB66B0-23BE-4632-8DD1-DBC077F8FFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FECB66B0-23BE-4632-8DD1-DBC077F8FFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FECB66B0-23BE-4632-8DD1-DBC077F8FFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B63855B6-B4E8-4A8C-A4DD-B5A4FA1F162D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B63855B6-B4E8-4A8C-A4DD-B5A4FA1F162D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B63855B6-B4E8-4A8C-A4DD-B5A4FA1F162D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B63855B6-B4E8-4A8C-A4DD-B5A4FA1F162D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

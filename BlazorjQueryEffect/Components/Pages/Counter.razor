@@ -1,0 +1,41 @@
+﻿@page "/counter"
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary mb-3" @onclick="IncrementCount">Click me</button>
+
+<CascadingValue Name="OnAnimationEnd" Value="@EventCallback.Factory.Create(this,AnimationEnd)">
+    <InputPassword @ref="inputPassword" Shake="@NotifyBadPassword" />
+</CascadingValue>
+<button class="btn btn-secondary mt-1" @onclick="OkClicked" >OK</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+
+    InputPassword inputPassword;
+    bool NotifyBadPassword = false;
+
+    private void OkClicked()
+    {
+        if (inputPassword.Password != "test")
+            NotifyBadPassword = true;
+
+        StateHasChanged();
+    }
+
+    private void AnimationEnd()
+    {
+        NotifyBadPassword = false;
+    }
+}
